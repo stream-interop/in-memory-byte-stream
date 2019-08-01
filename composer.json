@@ -1,0 +1,28 @@
+{
+    "name": "stream-interop/in-memory-byte-stream",
+    "description": "An implementation of the [stream-interop](https://github.com/stream-interop/stream-interop) interfaces for dealing with byte-only in-memory streams.",
+    "type": "library",
+    "require": {
+        "stream-interop/stream-interop": "dev-master"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^8.2"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Nathan Bishop",
+            "email": "nbish11@hotmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Interop\\Stream\\ByteStream\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Interop\\Stream\\ByteStream\\": "tests/"
+        }
+    }
+}
