@@ -1,22 +1,36 @@
 <?php
 declare(strict_types=1);
 
-namespace Interop\Stream\ByteStream;
+namespace StreamInterop\Impl;
 
-use Interop\Stream\Duplex;
-use Interop\Stream\Seekable;
-use Interop\Stream\Writable;
 use InvalidArgumentException;
+use StreamInterop\Interface\ReadableStream;
+use StreamInterop\Interface\SeekableStream;
+use StreamInterop\Interface\SizableStream;
+use StreamInterop\Interface\WritableStream;
+use Stringable;
 
 /**
- * Manipulate 'in-memory' byte streams.
+ * Manipulate 'in-memory' byte streams; example of a stream not backed by a resource.
  *
  * @author Nathan Bishop (nbish11)
- * @copyright 2019 Nathan Bishop
+ * @author Paul M. Jones (pmjones)
+ * @copyright 2019-2025, Nathan Bishop and Paul M. Jones
  * @license The MIT license.
  */
-final class InMemory implements Duplex, Seekable
+final class StringStream implements ReadableStream, SeekableStream, SizableStream, WritableStream
 {
+    public array $metadata {
+        get {
+            return [
+                'stream_type' => self::CLASS,
+                'mode' => 'wb+',
+                'unread_bytes' => $this->getSize() - $this->tell(),
+                'seekable' => true,
+            ];
+        }
+    }
+
     /**
      * @var integer The current byte to be read from the buffer
      */
@@ -55,17 +69,7 @@ final class InMemory implements Duplex, Seekable
     /**
      * {@inheritdoc}
      */
-    public function pipe(Writable $destination): Writable
-    {
-        $destination->write($this->data);
-
-        return $destination;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function write(string $data): int
+    public function write(string|Stringable $data): int
     {
         $length = strlen($data);
 
@@ -94,18 +98,18 @@ final class InMemory implements Duplex, Seekable
     /**
      * {@inheritdoc}
      */
-    public function seek(int $offset, int $whence = Seekable::SEEK_SET): void
+    public function seek(int $offset, int $whence = SEEK_SET): void
     {
         switch ($whence) {
-            case Seekable::SEEK_SET:
+            case SEEK_SET:
                 $this->position = $offset;
                 break;
 
-            case Seekable::SEEK_CURRENT:
+            case SEEK_CUR:
                 $this->position += $offset;
                 break;
 
-            case Seekable::SEEK_END:
+            case SEEK_END:
                 $this->position = strlen($this->data) + $offset;
                 break;
 
@@ -142,5 +146,21 @@ final class InMemory implements Duplex, Seekable
         }
 
         return $data;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isOpen(): bool
+    {
+        return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isClosed(): bool
+    {
+        return false;
     }
 }

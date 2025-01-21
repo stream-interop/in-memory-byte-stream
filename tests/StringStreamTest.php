@@ -1,24 +1,25 @@
 <?php
 declare(strict_types=1);
 
-namespace Interop\Stream\ByteStream;
+namespace StreamInterop\Impl;
 
-use Interop\Stream\ByteStream\InMemory;
-use Interop\Stream\Duplex;
-use Interop\Stream\Seekable;
-use PHPUnit\Framework\TestCase;
 use InvalidArgumentException;
+use PHPUnit\Framework\TestCase;
+use StreamInterop\Interface\ReadableStream;
+use StreamInterop\Interface\SeekableStream;
+use StreamInterop\Interface\SizableStream;
+use StreamInterop\Interface\WritableStream;
 
-final class InMemoryTest extends TestCase
+final class StringStreamTest extends TestCase
 {
     /**
      * @test
      */
-    public function is_a_duplex_stream(): void
+    public function is_a_readable_stream(): void
     {
-        $stream = new InMemory();
+        $stream = new StringStream();
 
-        $this->assertInstanceOf(Duplex::class, $stream);
+        $this->assertInstanceOf(ReadableStream::class, $stream);
     }
 
     /**
@@ -26,9 +27,29 @@ final class InMemoryTest extends TestCase
      */
     public function is_a_seekable_stream(): void
     {
-        $stream = new InMemory();
+        $stream = new StringStream();
 
-        $this->assertInstanceOf(Seekable::class, $stream);
+        $this->assertInstanceOf(SeekableStream::class, $stream);
+    }
+
+    /**
+     * @test
+     */
+    public function is_a_sizable_stream(): void
+    {
+        $stream = new StringStream();
+
+        $this->assertInstanceOf(SizableStream::class, $stream);
+    }
+
+    /**
+     * @test
+     */
+    public function is_a_writable_stream(): void
+    {
+        $stream = new StringStream();
+
+        $this->assertInstanceOf(WritableStream::class, $stream);
     }
 
     /**
@@ -36,7 +57,7 @@ final class InMemoryTest extends TestCase
      */
     public function position_for_new_stream_without_data_is_at_start(): void
     {
-        $stream = new InMemory();
+        $stream = new StringStream();
 
         $this->assertEquals(0, $stream->tell());
     }
@@ -46,7 +67,7 @@ final class InMemoryTest extends TestCase
      */
     public function position_for_new_stream_with_data_is_at_start(): void
     {
-        $stream = new InMemory('hello');
+        $stream = new StringStream('hello');
 
         $this->assertEquals(0, $stream->tell());
     }
@@ -56,7 +77,7 @@ final class InMemoryTest extends TestCase
      */
     public function reading_from_empty_stream_does_not_advance_pointer(): void
     {
-        $stream = new InMemory();
+        $stream = new StringStream();
 
         $stream->read(2);
 
@@ -68,7 +89,7 @@ final class InMemoryTest extends TestCase
      */
     public function reading_from_stream_advances_pointer_by_amount_of_bytes_read(): void
     {
-        $stream = new InMemory('hello');
+        $stream = new StringStream('hello');
 
         $stream->read(2);
 
@@ -80,7 +101,7 @@ final class InMemoryTest extends TestCase
      */
     public function reading_from_stream_does_not_advance_pointer_more_than_what_is_read(): void
     {
-        $stream = new InMemory('hello');
+        $stream = new StringStream('hello');
 
         $stream->read(512);
 
@@ -92,7 +113,7 @@ final class InMemoryTest extends TestCase
      */
     public function reading_from_empty_stream_returns_no_data(): void
     {
-        $stream = new InMemory();
+        $stream = new StringStream();
 
         $dataRead = $stream->read(512);
 
@@ -104,7 +125,7 @@ final class InMemoryTest extends TestCase
      */
     public function reading_from_stream_returns_only_the_amount_of_bytes_asked_for(): void
     {
-        $stream = new InMemory('hello');
+        $stream = new StringStream('hello');
 
         $readData = $stream->read(2);
 
@@ -114,36 +135,9 @@ final class InMemoryTest extends TestCase
     /**
      * @test
      */
-    public function data_is_piped_correctly_to_another_writable_stream(): void
-    {
-        $stream = new InMemory('hello');
-
-        $returnStream = $stream->pipe(new InMemory());
-        $returnStream->rewind();
-        $returnStreamData = $returnStream->getContents();
-
-        $this->assertEquals('hello', $returnStreamData);
-    }
-
-    /**
-     * @test
-     */
-    public function returned_stream_after_piping_is_the_same_stream_that_was_provided_for_piping_to(): void
-    {
-        $writable = new InMemory();
-        $stream = new InMemory('hello');
-
-        $returnStream = $stream->pipe($writable);
-
-        $this->assertSame($writable, $returnStream);
-    }
-
-    /**
-     * @test
-     */
     public function writing_data_advances_position(): void
     {
-        $stream = new InMemory();
+        $stream = new StringStream();
 
         $stream->write('hello');
 
@@ -155,7 +149,7 @@ final class InMemoryTest extends TestCase
      */
     public function writing_data_is_added_to_end_of_stream(): void
     {
-        $stream = new InMemory();
+        $stream = new StringStream();
 
         $stream->write('hello');
         $stream->rewind();
@@ -168,7 +162,7 @@ final class InMemoryTest extends TestCase
      */
     public function writing_data_returns_amount_of_bytes_added_to_end_of_stream(): void
     {
-        $stream = new InMemory();
+        $stream = new StringStream();
 
         $bytesWritten = $stream->write('hello');
 
@@ -180,7 +174,7 @@ final class InMemoryTest extends TestCase
      */
     public function an_empty_stream_is_at_eof(): void
     {
-        $stream = new InMemory();
+        $stream = new StringStream();
 
         $this->assertTrue($stream->eof());
     }
@@ -190,7 +184,7 @@ final class InMemoryTest extends TestCase
      */
     public function after_writing_data_stream_is_at_eof(): void
     {
-        $stream = new InMemory();
+        $stream = new StringStream();
 
         $stream->write('hello');
 
@@ -202,7 +196,7 @@ final class InMemoryTest extends TestCase
      */
     public function stream_is_at_eof_after_reading_last_of_data(): void
     {
-        $stream = new InMemory('hello');
+        $stream = new StringStream('hello');
 
         $stream->read(512);
 
@@ -214,7 +208,7 @@ final class InMemoryTest extends TestCase
      */
     public function stream_is_at_eof_after_reading_contents(): void
     {
-        $stream = new InMemory('hello');
+        $stream = new StringStream('hello');
 
         $stream->getContents();
 
@@ -226,7 +220,7 @@ final class InMemoryTest extends TestCase
      */
     public function stream_is_no_longer_at_eof_after_rewinding(): void
     {
-        $stream = new InMemory();
+        $stream = new StringStream();
         $stream->write('hello');
 
         $stream->rewind();
@@ -239,7 +233,7 @@ final class InMemoryTest extends TestCase
      */
     public function empty_stream_has_no_size(): void
     {
-        $stream = new InMemory();
+        $stream = new StringStream();
 
         $this->assertEquals(0, $stream->getSize());
     }
@@ -249,7 +243,7 @@ final class InMemoryTest extends TestCase
      */
     public function can_get_size_of_data_in_stream(): void
     {
-        $stream = new InMemory('hello');
+        $stream = new StringStream('hello');
 
         $this->assertEquals(5, $stream->getSize());
     }
@@ -259,7 +253,7 @@ final class InMemoryTest extends TestCase
      */
     public function throws_error_for_invalid_seek_operation(): void
     {
-        $stream = new InMemory('hello');
+        $stream = new StringStream('hello');
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid seek operation');
@@ -272,9 +266,9 @@ final class InMemoryTest extends TestCase
      */
     public function seek_set_op_sets_to_offset(): void
     {
-        $stream = new InMemory('hello');
+        $stream = new StringStream('hello');
 
-        $stream->seek(2, Seekable::SEEK_SET);
+        $stream->seek(2, SEEK_SET);
 
         $this->assertEquals(2, $stream->tell());
     }
@@ -284,10 +278,10 @@ final class InMemoryTest extends TestCase
      */
     public function seek_current_op_adds_offset(): void
     {
-        $stream = new InMemory('hello');
+        $stream = new StringStream('hello');
         $stream->seek(1);
 
-        $stream->seek(2, Seekable::SEEK_CURRENT);
+        $stream->seek(2, SEEK_CUR);
 
         $this->assertEquals(3, $stream->tell());
     }
@@ -297,9 +291,9 @@ final class InMemoryTest extends TestCase
      */
     public function seek_end_op_adds_offset_to_eof(): void
     {
-        $stream = new InMemory('hello');
+        $stream = new StringStream('hello');
 
-        $stream->seek(-1, Seekable::SEEK_END);
+        $stream->seek(-1, SEEK_END);
 
         $this->assertEquals(4, $stream->tell());
     }
@@ -309,7 +303,7 @@ final class InMemoryTest extends TestCase
      */
     public function rewinding_stream_returs_position_to_start(): void
     {
-        $stream = new InMemory();
+        $stream = new StringStream();
         $stream->write('hello');
 
         $stream->rewind();
@@ -322,7 +316,7 @@ final class InMemoryTest extends TestCase
      */
     public function stream_with_no_data_has_no_contents(): void
     {
-        $stream = new InMemory();
+        $stream = new StringStream();
 
         $remainingData = $stream->getContents();
 
@@ -334,7 +328,7 @@ final class InMemoryTest extends TestCase
      */
     public function stream_with_position_at_start_returns_all_data(): void
     {
-        $stream = new InMemory('hello');
+        $stream = new StringStream('hello');
 
         $this->assertEquals('hello', $stream->getContents());
     }
@@ -344,7 +338,7 @@ final class InMemoryTest extends TestCase
      */
     public function stream_with_position_not_at_start_returns_remaming_contents_from_position_to_eof(): void
     {
-        $stream = new InMemory('hello');
+        $stream = new StringStream('hello');
         $stream->seek(2);
 
         $remainingData = $stream->getContents();
@@ -357,7 +351,7 @@ final class InMemoryTest extends TestCase
      */
     public function getting_contents_from_stream_advances_position(): void
     {
-        $stream = new InMemory('hello');
+        $stream = new StringStream('hello');
 
         $stream->getContents();
 
