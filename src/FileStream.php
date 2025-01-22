@@ -83,23 +83,19 @@ class FileStream implements ResourceStream, SizableStream
 
     protected function setResource(mixed $resource) : void
     {
-        if (! is_resource($resource)) {
-            $type = get_debug_type($resource);
-
-            throw new ValueError(
-                "Expected open resource of type (stream), got {$type}.",
-            );
+        if (
+            is_resource($resource)
+            && get_resource_type($resource) === 'stream'
+        ) {
+            $this->resource = $resource;
+            return;
         }
 
-        $type = get_resource_type($resource);
+        $type = get_debug_type($resource);
 
-        if ($type !== 'stream') {
-            throw new ValueError(
-                "Expected open resource of type (stream), got resource of type ({$type}).",
-            );
-        }
-
-        $this->resource = $resource;
+        throw new ValueError(
+            "Expected resource (stream), got {$type}."
+        );
     }
 
     protected function intOrThrow(bool|int $result, string $message, false|int $failure = false) : int

@@ -7,16 +7,11 @@ use ValueError;
 
 class FileStreamTest extends TestCase
 {
-    protected function newFileStream()
+    protected function newFileStream() : FileStream
     {
-        return new FileStream($this->fopenFakeFile('r'));
-    }
-
-    public function testNotResource() : void
-    {
-        $this->expectException(ValueError::CLASS);
-        $this->expectExceptionMessage('Expected open resource of type (stream), got string.');
-        $stream = new FileStream('foo');
+        $resource = $this->fopenFakeFile('r');
+        assert(is_resource($resource));
+        return new FileStream($resource);
     }
 
     public function testResourceNotOpen() : void
@@ -24,7 +19,7 @@ class FileStreamTest extends TestCase
         $resource = $this->fopenFakeFile('r');
         fclose($resource);
         $this->expectException(ValueError::CLASS);
-        $this->expectExceptionMessage('Expected open resource of type (stream), got resource (closed).');
+        $this->expectExceptionMessage('Expected resource (stream), got resource (closed).');
         $stream = new FileStream($resource);
     }
 
@@ -32,7 +27,7 @@ class FileStreamTest extends TestCase
     {
         $resource = stream_context_create();
         $this->expectException(ValueError::CLASS);
-        $this->expectExceptionMessage('Expected open resource of type (stream), got resource of type (stream-context).');
+        $this->expectExceptionMessage('Expected resource (stream), got resource (stream-context).');
         $stream = new FileStream($resource);
     }
 

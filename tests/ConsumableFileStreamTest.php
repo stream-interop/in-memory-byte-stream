@@ -7,14 +7,17 @@ use ValueError;
 
 class ConsumableFileStreamTest extends TestCase
 {
-    public function newConsumableFileStream()
+    public function newConsumableFileStream() : ConsumableFileStream
     {
-        return new ConsumableFileStream($this->fopenFakeFile('r'));
+        $resource = $this->fopenFakeFile('r');
+        assert(is_resource($resource));
+        return new ConsumableFileStream($resource);
     }
 
     public function testNotReadable() : void
     {
         $resource = fopen($this->fakeFile(), 'a');
+        assert(is_resource($resource));
         $this->expectException(ValueError::CLASS);
         $this->expectExceptionMessage('Resource is not readable.');
         $stream = new ReadableFileStream($resource);
@@ -40,7 +43,9 @@ class ConsumableFileStreamTest extends TestCase
     {
         $stream = $this->newConsumableFileStream();
         $this->assertFalse($stream->eof());
-        $stream->read($stream->getSize());
+        $size = $stream->getSize();
+        assert($size > 0);
+        $stream->read($size);
         $this->assertFalse($stream->eof());
         $stream->read(1);
         $this->assertTrue($stream->eof());

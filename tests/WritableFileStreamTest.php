@@ -7,14 +7,17 @@ use ValueError;
 
 class WritableFileStreamTest extends TestCase
 {
-    public function newWritableFileStream()
+    public function newWritableFileStream() : WritableFileStream
     {
-        return new WritableFileStream(fopen('php://memory', 'w+'));
+        $resource = fopen('php://memory', 'w+');
+        assert(is_resource($resource));
+        return new WritableFileStream($resource);
     }
 
     public function testNotWritable() : void
     {
         $resource = fopen($this->fakeFile(), 'r');
+        assert(is_resource($resource));
         $this->expectException(ValueError::CLASS);
         $this->expectExceptionMessage('Resource is not writable.');
         $stream = new WritableFileStream($resource);

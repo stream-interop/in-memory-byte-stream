@@ -5,9 +5,11 @@ namespace StreamInterop\Impl;
 
 class ReadWriteFileStreamTest extends TestCase
 {
-    public function newReadWriteFileStream()
+    public function newReadWriteFileStream() : ReadWriteFileStream
     {
-        return new ReadWriteFileStream(fopen('php://memory', 'r+'));
+        $resource = fopen('php://memory', 'r+');
+        assert(is_resource($resource));
+        return new ReadWriteFileStream($resource);
     }
 
     public function testReadWrite() : void

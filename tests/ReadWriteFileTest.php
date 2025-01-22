@@ -7,7 +7,7 @@ use RuntimeException;
 
 class ReadWriteFileTest extends TestCase
 {
-    public function newReadWriteFile()
+    public function newReadWriteFile() : ReadWriteFile
     {
         return new ReadWriteFile($this->fakeFile());
     }
@@ -17,7 +17,7 @@ class ReadWriteFileTest extends TestCase
         $stream = new ReadWriteFile('noSuchWrapper://foobar');
         $this->expectException(RuntimeException::CLASS);
         $this->expectExceptionMessage('Could not open rb+ resource for noSuchWrapper://foobar');
-        $stream->resource;
+        $this->assertFalse(is_resource($stream->resource));
     }
 
     public function testClose() : void

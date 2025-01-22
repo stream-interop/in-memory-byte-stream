@@ -7,7 +7,7 @@ use ValueError;
 
 class ReadableFileStreamTest extends TestCase
 {
-    public function newReadableFileStream()
+    public function newReadableFileStream() : ReadableFileStream
     {
         return new ReadableFileStream($this->fopenFakeFile('r'));
     }
@@ -15,6 +15,7 @@ class ReadableFileStreamTest extends TestCase
     public function testNotSeekable() : void
     {
         $resource = popen('ls', 'r');
+        assert(is_resource($resource));
         fread($resource, 1); // avoid broken pipe by reading at least one char
         $this->expectException(ValueError::CLASS);
         $this->expectExceptionMessage('Resource is not seekable.');
@@ -24,6 +25,7 @@ class ReadableFileStreamTest extends TestCase
     public function testNotReadable() : void
     {
         $resource = fopen($this->fakeFile(), 'a');
+        assert(is_resource($resource));
         $this->expectException(ValueError::CLASS);
         $this->expectExceptionMessage('Resource is not readable.');
         $stream = new ReadableFileStream($resource);
@@ -69,7 +71,9 @@ class ReadableFileStreamTest extends TestCase
     {
         $stream = $this->newReadableFileStream();
         $this->assertFalse($stream->eof());
-        $stream->read($stream->getSize());
+        $size = $stream->getSize();
+        assert($size > 0);
+        $stream->read($size);
         $this->assertFalse($stream->eof());
         $stream->read(1);
         $this->assertTrue($stream->eof());

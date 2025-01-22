@@ -5,13 +5,21 @@ namespace StreamInterop\Impl;
 
 abstract class TestCase extends \PHPUnit\Framework\TestCase
 {
+    /**
+     * @return non-empty-string
+     */
     protected function fakeFile() : string
     {
         return __DIR__ . DIRECTORY_SEPARATOR . 'fake-file.txt';
     }
 
-    protected function fopenFakeFile(string $mode)
+    /**
+     * @return resource
+     */
+    protected function fopenFakeFile(string $mode) : mixed
     {
-        return fopen($this->fakeFile(), $mode);
+        $resource = fopen($this->fakeFile(), $mode);
+        assert(is_resource($resource));
+        return $resource;
     }
 }
