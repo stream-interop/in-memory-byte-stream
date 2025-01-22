@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace StreamInterop\Impl;
 
-use InvalidArgumentException;
+use RuntimeException;
 use StreamInterop\Interface\ReadableStream;
 use StreamInterop\Interface\SeekableStream;
 use StreamInterop\Interface\SizableStream;
@@ -11,12 +11,7 @@ use StreamInterop\Interface\WritableStream;
 use Stringable;
 
 /**
- * Manipulate 'in-memory' byte streams; example of a stream not backed by a resource.
- *
- * @author Nathan Bishop (nbish11)
- * @author Paul M. Jones (pmjones)
- * @copyright 2019-2025, Nathan Bishop and Paul M. Jones
- * @license The MIT license.
+ * A read+seek+write stream backed by a string of data instead of a resource.
  */
 final class StringStream implements ReadableStream, SeekableStream, SizableStream, WritableStream
 {
@@ -32,7 +27,7 @@ final class StringStream implements ReadableStream, SeekableStream, SizableStrea
     }
 
     /**
-     * @var integer The current byte to be read from the buffer
+     * @var integer The current byte to be read from the buffer.
      */
     private $position;
 
@@ -42,12 +37,7 @@ final class StringStream implements ReadableStream, SeekableStream, SizableStrea
     private $data;
 
     /**
-     * Create a new 'buffer' stream.
-     *
-     * Providing data through the constructor will automatically
-     * rewind the internal pointer to the start of the buffer.
-     *
-     * @param string $data The in-memory data to be put in the buffer.
+     * @param string $data The string data to be put into the buffer.
      */
     public function __construct(string $data = '')
     {
@@ -56,49 +46,46 @@ final class StringStream implements ReadableStream, SeekableStream, SizableStrea
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function read(int $length): string
+    public function read(int $length) : string
     {
         $buffer = substr($this->data, $this->position, $length);
         $this->position += ($length >= strlen($buffer) ? strlen($buffer) : $length);
-
         return $buffer;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function write(string|Stringable $data): int
+    public function write(string|Stringable $data) : int
     {
-        $length = strlen($data);
-
+        $length = strlen((string) $data);
         $this->data .= $data;
         $this->position += $length;
-
         return $length;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function eof(): bool
+    public function eof() : bool
     {
         return $this->position >= strlen($this->data);
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function getSize(): int
+    public function getSize() : int
     {
         return strlen($this->data);
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function seek(int $offset, int $whence = SEEK_SET): void
+    public function seek(int $offset, int $whence = SEEK_SET) : void
     {
         switch ($whence) {
             case SEEK_SET:
@@ -114,34 +101,34 @@ final class StringStream implements ReadableStream, SeekableStream, SizableStrea
                 break;
 
             default:
-                throw new InvalidArgumentException('Invalid seek operation');
+                throw new RuntimeException("Invalid seek operation: {$whence}");
         }
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function tell(): int
+    public function tell() : int
     {
         return $this->position;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function rewind(): void
+    public function rewind() : void
     {
         $this->position = 0;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function getContents(): string
+    public function getContents() : string
     {
         $data = '';
 
-        while (!$this->eof()) {
+        while (! $this->eof()) {
             $data .= $this->read(512);
         }
 
@@ -149,17 +136,17 @@ final class StringStream implements ReadableStream, SeekableStream, SizableStrea
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function isOpen(): bool
+    public function isOpen() : bool
     {
         return true;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function isClosed(): bool
+    public function isClosed() : bool
     {
         return false;
     }
