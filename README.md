@@ -1,36 +1,46 @@
-# StreamInterop Reference Implementations
+# stream-interop/impl
 
-> An implementation of the [stream-interop](https://github.com/stream-interop/interface) interfaces for dealing with byte-only in-memory streams.
+Reference implementations of [stream-interop/interface][].
 
 ## Installation
 
-The recommended way of installing this package is via [Composer]():
+The recommended way of installing this package is via [Composer][]:
 
-```cli
+```
 $ composer require stream-interop/impl
 ```
 
-## Usage
+## Implementations
+
+### File Streams
+
+#### _FileStream_
+
+#### _ConsumableFileStream_
+
+#### _ReadableFileStream_
+
+#### _ReadWriteFileStream_
+
+#### _WritableFileStream_
+
+### Lazy Ghost File Objects
+
+#### _ReadableFile_
+
+#### _ReadWriteFile_
+
+### Non-Resource Streams
+
+#### _StringStream_
 
 ```php
-$byteStream = new \StreamInterop\Impl\StringStream('hello');
+$stream = new \StreamInterop\Impl\StringStream('hello');
 
-$byteStream->read(2);   // returns 'he'
-$byteStream->getContents();  // returns 'llo'
-$byteStream->write(' world');
+$stream->read(2);   // returns 'he'
+$stream->getContents();  // returns 'llo'
+$stream->write(' world');
 
-$byteStream->rewind();
-$byteStream->getContents(); // returns 'hello world'
+$stream->rewind();
+$stream->getContents(); // returns 'hello world'
 ```
-
-## Contributing
-
-See the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information.
-
-## Credits/Authors
-
-## License
-
-The MIT License.
-
-See the [LICENSE.md](LICENSE.md) file for more information.
