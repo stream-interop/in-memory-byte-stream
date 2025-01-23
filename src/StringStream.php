@@ -76,8 +76,9 @@ final class StringStream implements ReadableStream, SeekableStream, SizableStrea
 
     /**
      * @inheritdoc
+     * @phpstan-ignore return.unusedType
      */
-    public function getSize() : int
+    public function getSize() : ?int
     {
         return strlen($this->data);
     }

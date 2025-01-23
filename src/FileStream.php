@@ -7,7 +7,7 @@ use RuntimeException;
 use StreamInterop\Interface\ResourceStream;
 use StreamInterop\Interface\SizableStream;
 use StreamInterop\Interface\Stream;
-use ValueError;
+use InvalidArgumentException;
 
 /**
  * Basic functionality for file resources; state-reporting only (no reading,
@@ -40,7 +40,7 @@ class FileStream implements ResourceStream, SizableStream
     /**
      * @inheritdoc
      */
-    public function getSize() : int
+    public function getSize() : ?int
     {
         /**
          * @see https://www.php.net/manual/en/function.stat.php
@@ -93,7 +93,7 @@ class FileStream implements ResourceStream, SizableStream
 
         $type = get_debug_type($resource);
 
-        throw new ValueError(
+        throw new InvalidArgumentException(
             "Expected resource (stream), got {$type}."
         );
     }
@@ -133,7 +133,7 @@ class FileStream implements ResourceStream, SizableStream
             || strstr($mode, '+') !== false;
 
         if (! $readable) {
-            throw new ValueError("Resource is not readable.");
+            throw new InvalidArgumentException("Resource is not readable.");
         }
     }
 
@@ -142,7 +142,7 @@ class FileStream implements ResourceStream, SizableStream
         $seekable = $this->metadata['seekable'];
 
         if (! $seekable) {
-            throw new ValueError("Resource is not seekable.");
+            throw new InvalidArgumentException("Resource is not seekable.");
         }
     }
 
@@ -154,7 +154,7 @@ class FileStream implements ResourceStream, SizableStream
             || strstr($mode, '+') !== false;
 
         if (! $writable) {
-            throw new ValueError("Resource is not writable.");
+            throw new InvalidArgumentException("Resource is not writable.");
         }
     }
 }

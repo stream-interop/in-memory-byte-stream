@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace StreamInterop\Impl;
 
-use ValueError;
+use InvalidArgumentException;
 
 class ReadableFileStreamTest extends TestCase
 {
@@ -17,7 +17,7 @@ class ReadableFileStreamTest extends TestCase
         $resource = popen('ls', 'r');
         assert(is_resource($resource));
         fread($resource, 1); // avoid broken pipe by reading at least one char
-        $this->expectException(ValueError::CLASS);
+        $this->expectException(InvalidArgumentException::CLASS);
         $this->expectExceptionMessage('Resource is not seekable.');
         $stream = new ReadableFileStream($resource);
     }
@@ -26,7 +26,7 @@ class ReadableFileStreamTest extends TestCase
     {
         $resource = fopen($this->fakeFile(), 'a');
         assert(is_resource($resource));
-        $this->expectException(ValueError::CLASS);
+        $this->expectException(InvalidArgumentException::CLASS);
         $this->expectExceptionMessage('Resource is not readable.');
         $stream = new ReadableFileStream($resource);
     }
