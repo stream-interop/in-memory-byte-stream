@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace StreamInterop\Impl;
 
+use LogicException;
 use RuntimeException;
 use StreamInterop\Interface\ResourceStream;
 use StreamInterop\Interface\SizableStream;
 use StreamInterop\Interface\Stream;
-use InvalidArgumentException;
 
 /**
  * Basic functionality for file resources; state-reporting only (no reading,
@@ -93,7 +93,7 @@ class FileStream implements ResourceStream, SizableStream
 
         $type = get_debug_type($resource);
 
-        throw new InvalidArgumentException(
+        throw new LogicException(
             "Expected resource (stream), got {$type}."
         );
     }
@@ -133,7 +133,7 @@ class FileStream implements ResourceStream, SizableStream
             || strstr($mode, '+') !== false;
 
         if (! $readable) {
-            throw new InvalidArgumentException("Resource is not readable.");
+            throw new LogicException("Resource is not readable.");
         }
     }
 
@@ -142,7 +142,7 @@ class FileStream implements ResourceStream, SizableStream
         $seekable = $this->metadata['seekable'];
 
         if (! $seekable) {
-            throw new InvalidArgumentException("Resource is not seekable.");
+            throw new LogicException("Resource is not seekable.");
         }
     }
 
@@ -154,7 +154,7 @@ class FileStream implements ResourceStream, SizableStream
             || strstr($mode, '+') !== false;
 
         if (! $writable) {
-            throw new InvalidArgumentException("Resource is not writable.");
+            throw new LogicException("Resource is not writable.");
         }
     }
 }

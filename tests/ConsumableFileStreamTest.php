@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace StreamInterop\Impl;
 
-use InvalidArgumentException;
+use LogicException;
 
 class ConsumableFileStreamTest extends TestCase
 {
@@ -18,7 +18,7 @@ class ConsumableFileStreamTest extends TestCase
     {
         $resource = fopen($this->fakeFile(), 'a');
         assert(is_resource($resource));
-        $this->expectException(InvalidArgumentException::CLASS);
+        $this->expectException(LogicException::CLASS);
         $this->expectExceptionMessage('Resource is not readable.');
         $stream = new ReadableFileStream($resource);
     }

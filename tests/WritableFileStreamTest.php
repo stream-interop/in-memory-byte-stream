@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace StreamInterop\Impl;
 
-use InvalidArgumentException;
+use LogicException;
 
 class WritableFileStreamTest extends TestCase
 {
@@ -18,7 +18,7 @@ class WritableFileStreamTest extends TestCase
     {
         $resource = fopen($this->fakeFile(), 'r');
         assert(is_resource($resource));
-        $this->expectException(InvalidArgumentException::CLASS);
+        $this->expectException(LogicException::CLASS);
         $this->expectExceptionMessage('Resource is not writable.');
         $stream = new WritableFileStream($resource);
     }
