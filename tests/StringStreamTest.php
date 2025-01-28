@@ -157,6 +157,8 @@ final class StringStreamTest extends TestCase
         $stream = new StringStream('hello');
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Invalid seek operation: 546');
+
+        /** @phpstan-ignore-next-line intentionally invalid seek operation */
         $stream->seek(2, 546);
     }
 
