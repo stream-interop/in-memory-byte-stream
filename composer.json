@@ -1,6 +1,6 @@
 {
     "name": "stream-interop/impl",
-    "description": "Reference implementations for the stream-interop/interface package",
+    "description": "Reference implementations for the stream-interop/interface package.",
     "type": "library",
     "require": {
         "stream-interop/interface": "1.x@dev"
