@@ -7,7 +7,6 @@ use LogicException;
 use RuntimeException;
 use StreamInterop\Interface\ResourceStream;
 use StreamInterop\Interface\SizableStream;
-use StreamInterop\Interface\Stream;
 
 /**
  * Basic functionality for file resources; state-reporting only (no reading,
