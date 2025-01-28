@@ -15,11 +15,14 @@ use Stringable;
  */
 final class StringStream implements ReadableStream, SeekableStream, SizableStream, WritableStream
 {
+    /**
+     * @inheridoc
+     */
     public array $metadata {
         get {
             return [
                 'stream_type' => self::CLASS,
-                'mode' => 'wb+',
+                'mode' => 'rb+',
                 'unread_bytes' => $this->getSize() - $this->tell(),
                 'seekable' => true,
             ];
