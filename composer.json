@@ -1,29 +1,38 @@
 {
     "name": "stream-interop/impl",
-    "description": "Reference implementations for the stream-interop/interface package.",
     "type": "library",
-    "require": {
-        "stream-interop/interface": "1.x@dev"
-    },
-    "require-dev": {
-        "phpunit/phpunit": "^11.0",
-        "phpstan/phpstan": "^2.0"
-    },
+    "description": "Reference implementations for the stream-interop/interface package.",
+    "keywords": ["stream", "interop", "resource"],
     "license": "MIT",
+    "homepage": "https://github.com/stream-interop/impl",
     "authors": [
         {
             "name": "Nathan Bishop",
-            "email": "nbish11@hotmail.com"
+            "email": "nbish11@hotmail.com",
+            "homepage": "https://github.com/nbish11",
+            "role": "Developer"
         },
         {
             "name": "Paul M. Jones",
-            "email": "pmjones@pmjones.io"
+            "email": "pmjones@pmjones.io",
+            "homepage": "https://pmjones.io/",
+            "role": "Lead"
         }
     ],
+    "require": {
+        "php": ">=8.4",
+        "stream-interop/interface": "1.x@dev"
+    },
     "autoload": {
         "psr-4": {
             "StreamInterop\\Impl\\": "src/"
         }
+    },
+    "require-dev": {
+        "pds/composer-script-names": "^1.0",
+        "pds/skeleton": "^1.0",
+        "phpstan/phpstan": "^2.0",
+        "phpunit/phpunit": "^11.0"
     },
     "autoload-dev": {
         "psr-4": {
