@@ -1,4 +1,4 @@
-# stream-interop/impl
+# Stream-Interop Implementation Package
 
 Reference implementations of [stream-interop/interface][].
 
